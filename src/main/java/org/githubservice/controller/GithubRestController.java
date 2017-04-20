@@ -1,6 +1,8 @@
 package org.githubservice.controller;
 
 import org.githubservice.model.GithubRepositoryModel;
+import org.githubservice.service.GithubConsumer;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -12,13 +14,17 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/repositories/{owner}/{repositoryname}")
 public class GithubRestController {
 
+    @Autowired
+    private GithubConsumer githubConsumer;
+
     @RequestMapping(method = RequestMethod.GET)
     public ResponseEntity<GithubRepositoryModel> getGithubRepositoryDetails(
             @PathVariable String owner,
-            @PathVariable String repositoryName) {
+            @PathVariable String repositoryname) {
 
-        GithubRepositoryModel githubRepoModel = new GithubRepositoryModel();
-
+        GithubRepositoryModel githubRepoModel =
+                githubConsumer.getGithubRepositoryModelOnOwnerRepositoryName(
+                        owner, repositoryname);
 
         return new ResponseEntity<GithubRepositoryModel>(githubRepoModel, HttpStatus.OK);
     }

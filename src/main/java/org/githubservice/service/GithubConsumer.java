@@ -1,7 +1,8 @@
 package org.githubservice.service;
 
-import org.springframework.stereotype.Service;
+import org.githubservice.model.GithubRepositoryModel;
 
-@Service
-public class GithubConsumer {
+public interface GithubConsumer {
+    GithubRepositoryModel getGithubRepositoryModelOnOwnerRepositoryName(
+            String setRepositoryOwner, String setRepositoryName);
 }
