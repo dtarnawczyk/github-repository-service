@@ -2,6 +2,7 @@ package org.githubservice.exception;
 
 
 public class GithubServiceError {
+
     private int statusCode = 0;
     private String message = "";
 

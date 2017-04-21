@@ -1,3 +1,10 @@
+server:
+  port: 8080
+
 logging:
   level:
     ROOT: DEBUG
+
+github:
+   api:
+    url: https://api.github.com/repos/

@@ -26,12 +26,12 @@ public class GithubRestControllerTest {
 
     private String repositoryOwner = "jquery";
     private String repositoryName = "jquery";
-    private String githubRepositoryServicePath = "/repositories/"+repositoryOwner+"/"+repositoryName;
-    private GithubRepositoryModel fakeRepositoryDetails;
+    private String githubRepositoryServicePath = "/repositories/" + repositoryOwner + "/" + repositoryName;
 
     @Test
     public void whenExistingOwnerAndRepositoryNameProvidedThenReturnRepositoryDetails() throws Exception {
-        fakeRepositoryDetails = new GithubRepositoryModel();
+
+        GithubRepositoryModel fakeRepositoryDetails = new GithubRepositoryModel();
         fakeRepositoryDetails.setFullName("jquery/jquery");
         fakeRepositoryDetails.setDescription("jQuery JavaScript Library");
         fakeRepositoryDetails.setCloneUrl("https://github.com/jquery/jquery.git");
@@ -46,6 +46,7 @@ public class GithubRestControllerTest {
 
     @Test
     public void whenNotExistingOwnerOrRepositoryNameProvidedThenThrowException() throws Exception {
+
         githubRepositoryServicePath = "/repositories/testuser/testrepo";
         this.mockMvc.perform(get(githubRepositoryServicePath).accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isNotFound())

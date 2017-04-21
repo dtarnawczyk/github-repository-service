@@ -25,11 +25,14 @@ public class GithubRestController {
             @PathVariable String repositoryname) {
 
         try {
+
             GithubRepositoryModel githubRepoModel =
                     githubConsumer.getGithubRepositoryModelOnOwnerRepositoryName(
                             owner, repositoryname);
             return new ResponseEntity<GithubRepositoryModel>(githubRepoModel, HttpStatus.OK);
+
         } catch (GithubRepositoryException serviceException) {
+
             GithubServiceError error = new GithubServiceError();
             error.setStatusCode(serviceException.getStatusCode());
             if(serviceException.getStatusCode() == HttpStatus.NOT_FOUND.value()) {
