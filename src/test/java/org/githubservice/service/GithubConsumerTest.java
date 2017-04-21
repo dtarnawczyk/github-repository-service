@@ -2,10 +2,13 @@ package org.githubservice.service;
 
 import org.githubservice.exception.GithubRepositoryException;
 import org.githubservice.model.GithubRepositoryModel;
+import org.githubservice.util.DateUtil;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
+
+import java.util.Date;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
@@ -27,7 +30,8 @@ public class GithubConsumerTest {
         fakeRepositoryDetails.setDescription("jQuery JavaScript Library");
         fakeRepositoryDetails.setCloneUrl("https://github.com/jquery/jquery.git");
         fakeRepositoryDetails.setStars(44470);
-        fakeRepositoryDetails.setCreatedAt("2009-04-03T15:20:14Z");
+        Date expectedDate = DateUtil.createDateFromIsoString("2009-04-03T15:20:14Z");
+        fakeRepositoryDetails.setCreatedAt(expectedDate);
 
         when(this.githubConsumer.getGithubRepositoryModelOnOwnerRepositoryName(repositoryOwner, repositoryName))
                 .thenReturn(fakeRepositoryDetails);
@@ -39,7 +43,7 @@ public class GithubConsumerTest {
         assertEquals("jQuery JavaScript Library", model.getDescription());
         assertEquals("https://github.com/jquery/jquery.git", model.getCloneUrl());
         assertEquals(44470, model.getStars());
-        assertEquals("2009-04-03T15:20:14Z", model.getCreatedAt());
+        assertEquals(expectedDate, model.getCreatedAt());
     }
 
     @Test (expected = GithubRepositoryException.class)

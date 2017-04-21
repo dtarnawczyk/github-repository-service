@@ -1,11 +1,14 @@
 package org.githubservice.model;
 
+import org.githubservice.util.DateUtil;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.json.JsonTest;
 import org.springframework.boot.test.json.JacksonTester;
 import org.springframework.test.context.junit4.SpringRunner;
+
+import java.util.Date;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -21,7 +24,7 @@ public class GithubRepositoryModelTest {
             "  \"description\": \"jQuery JavaScript Library\",\n" +
             "  \"cloneUrl\": \"https://github.com/jquery/jquery.git\",\n" +
             "  \"stars\": 44470,\n" +
-            "  \"createdAt\": \"2009-04-03T15:20:14Z\"\n" +
+            "  \"createdAt\": \"2009-04-03 15:20:14\"\n" +
             "}";
 
     @Test
@@ -32,7 +35,7 @@ public class GithubRepositoryModelTest {
         githubRepositoryModel.setDescription("jQuery JavaScript Library");
         githubRepositoryModel.setCloneUrl("https://github.com/jquery/jquery.git");
         githubRepositoryModel.setStars(44470);
-        githubRepositoryModel.setCreatedAt("2009-04-03T15:20:14Z");
+        githubRepositoryModel.setCreatedAt(DateUtil.createDateFromIsoString("2009-04-03T15:20:14Z"));
         assertThat(this.json.write(githubRepositoryModel)).isEqualToJson(expectedJson);
     }
 
@@ -66,21 +69,20 @@ public class GithubRepositoryModelTest {
         String description = "Learning Record Store";
         String cloneUrl = "https://github.com/dtarnawczyk/modernlrs.git";
         int stars = 0;
-        String createdAt = "2016-11-16T12:58:32Z";
+        Date expectedDate = DateUtil.createDateFromIsoString("2016-11-16T12:58:32Z");
 
         GithubRepositoryModel expectedGithubRepositoryModel = new GithubRepositoryModel();
         expectedGithubRepositoryModel.setFullName(fullName);
         expectedGithubRepositoryModel.setDescription(description);
         expectedGithubRepositoryModel.setCloneUrl(cloneUrl);
         expectedGithubRepositoryModel.setStars(stars);
-        expectedGithubRepositoryModel.setCreatedAt(createdAt);
-        
+        expectedGithubRepositoryModel.setCreatedAt(expectedDate);
+
         assertThat(this.json.parseObject(jsonFromGithub).getFullName()).isEqualTo(fullName);
         assertThat(this.json.parseObject(jsonFromGithub).getDescription()).isEqualTo(description);
         assertThat(this.json.parseObject(jsonFromGithub).getCloneUrl()).isEqualTo(cloneUrl);
         assertThat(this.json.parseObject(jsonFromGithub).getStars()).isEqualTo(stars);
-        assertThat(this.json.parseObject(jsonFromGithub).getCreatedAt()).isEqualTo(createdAt);
+        assertThat(this.json.parseObject(jsonFromGithub).getCreatedAt()).isEqualTo(expectedDate);
     }
-
 
 }
