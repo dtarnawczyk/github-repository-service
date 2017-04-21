@@ -2,25 +2,24 @@ package org.githubservice.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
-import java.util.Date;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @JsonIgnoreProperties(ignoreUnknown=true)
+@JsonPropertyOrder({ "fullName", "description", "cloneUrl", "stars", "createdAt" })
 public class GithubRepositoryModel {
-    @JsonProperty("full_name")
+
     private String fullName;
     private String description;
-    @JsonProperty("clone_url")
     private String cloneUrl;
-    @JsonProperty("stargazers_count")
     private Integer stars = 0;
-    @JsonProperty("created_at")
-    private Date createdAt = null;
+    private String createdAt = null;
 
+    @JsonProperty("fullName")
     public String getFullName() {
         return fullName;
     }
 
+    @JsonProperty("full_name")
     public void setFullName(String fullName) {
         this.fullName = fullName;
     }
@@ -33,27 +32,33 @@ public class GithubRepositoryModel {
         this.description = description;
     }
 
+    @JsonProperty("cloneUrl")
     public String getCloneUrl() {
         return cloneUrl;
     }
 
+    @JsonProperty("clone_url")
     public void setCloneUrl(String cloneUrl) {
         this.cloneUrl = cloneUrl;
     }
 
+    @JsonProperty("stars")
     public int getStars() {
         return stars;
     }
 
+    @JsonProperty("stargazers_count")
     public void setStars(int stars) {
         this.stars = stars;
     }
 
-    public Date getCreatedAt() {
+    @JsonProperty("createdAt")
+    public String getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(Date createdAt) {
+    @JsonProperty("created_at")
+    public void setCreatedAt(String createdAt) {
         this.createdAt = createdAt;
     }
 }

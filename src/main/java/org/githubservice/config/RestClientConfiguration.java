@@ -13,7 +13,7 @@ public class RestClientConfiguration {
 
     @Bean
     public RestTemplate restTemplate() {
-        return new RestTemplate();
+        return new RestTemplate(getClientHttpRequestFactory());
     }
 
     private ClientHttpRequestFactory getClientHttpRequestFactory() {
