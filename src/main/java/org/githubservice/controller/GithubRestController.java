@@ -39,6 +39,7 @@ public class GithubRestController {
                 error.setMessage("GitHub repository or user not found");
                 return new ResponseEntity<GithubServiceError>(error, HttpStatus.NOT_FOUND);
             }else{
+                // To not confuse users.
                 error.setMessage(serviceException.getLocalizedMessage());
                 return new ResponseEntity<GithubServiceError>(error, HttpStatus.SERVICE_UNAVAILABLE);
             }

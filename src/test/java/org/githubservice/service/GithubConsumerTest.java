@@ -49,25 +49,26 @@ public class GithubConsumerTest {
     @Test (expected = GithubRepositoryException.class)
     public void whenNonExistingRepositoryNameProvidedThenThrowsException() {
 
-        repositoryName = "jquery1234";
+        String unavailableRepositoryName = "jquery1234";
 
-        when(this.githubConsumer.getGithubRepositoryModelOnOwnerRepositoryName(repositoryOwner, repositoryName))
+        when(this.githubConsumer.getGithubRepositoryModelOnOwnerRepositoryName(
+                repositoryOwner, unavailableRepositoryName))
                 .thenThrow(GithubRepositoryException.class);
 
         githubConsumer.getGithubRepositoryModelOnOwnerRepositoryName(
-                repositoryOwner, repositoryName);
+                repositoryOwner, unavailableRepositoryName);
     }
 
     @Test (expected = GithubRepositoryException.class)
     public void whenNonExistingUserProvidedThenThrowsException() {
 
-        repositoryOwner = "jqueryUser";
+        String unavailableOwner = "jqueryUser";
 
-        when(this.githubConsumer.getGithubRepositoryModelOnOwnerRepositoryName(repositoryOwner, repositoryName))
+        when(this.githubConsumer.getGithubRepositoryModelOnOwnerRepositoryName(unavailableOwner, repositoryName))
                 .thenThrow(GithubRepositoryException.class);
 
         githubConsumer.getGithubRepositoryModelOnOwnerRepositoryName(
-                repositoryOwner, repositoryName);
+                unavailableOwner, repositoryName);
     }
 
 }
