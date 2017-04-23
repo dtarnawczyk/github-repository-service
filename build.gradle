@@ -26,12 +26,31 @@ tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
 }
 
+bootRepackage {
+    mainClass = 'org.githubservice.Application'
+}
+
+task copyJarToRoot(type: Copy) {
+    copy {
+        from jar
+        into "."
+    }
+}
+
+task release (dependsOn: [bootRepackage, copyJarToRoot])
+
 jacocoTestReport {
     group = "Reporting"
     reports {
         xml.enabled true
         csv.enabled false
         html.destination "${buildDir}/reports/coverage"
+    }
+}
+
+test {
+    testLogging {
+        events "PASSED", "FAILED", "SKIPPED"
     }
 }
 
