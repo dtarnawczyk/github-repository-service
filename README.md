@@ -28,7 +28,7 @@ Example usage:
 curl http://localhost:8080/repositories/{owner}/{repository-name}
 ```
 
-## Tests
+### Tests
 ```sh
 $ gradlew test
 ```
