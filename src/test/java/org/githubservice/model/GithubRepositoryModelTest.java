@@ -9,6 +9,9 @@ import org.springframework.boot.test.autoconfigure.json.JsonTest;
 import org.springframework.boot.test.json.JacksonTester;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.Date;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -20,31 +23,29 @@ public class GithubRepositoryModelTest {
     @Autowired
     private JacksonTester<GithubRepositoryModel> json;
 
-    private String expectedJson = "{\n" +
-            "  \"fullName\": \"jquery/jquery\",\n" +
-            "  \"description\": \"jQuery JavaScript Library\",\n" +
-            "  \"cloneUrl\": \"https://github.com/jquery/jquery.git\",\n" +
-            "  \"stars\": 44470,\n" +
-            "  \"createdAt\": \"2009-04-03 15:20:14\"\n" +
-            "}";
-
     @Test
     public void whenModelProvidedThenProperJsonCreated() throws Exception {
-
+        String expectedDate = "2009-04-03T15:20:14Z";
+        String localizedDateString = getLocalDateFormat(expectedDate);
+        String expectedJson = "{"+
+                "\"fullName\":\"jquery/jquery\"," +
+                "\"description\":\"jQuery JavaScript Library\"," +
+                "\"cloneUrl\":\"https://github.com/jquery/jquery.git\"," +
+                "\"stars\":44470,"+
+                "\"createdAt\":\""+localizedDateString+"\"" +
+                "}";
         GithubRepositoryModel githubRepositoryModel = new MockGithubRepositoryModel.Builder()
                 .setFullName("jquery/jquery")
                 .setDescription("jQuery JavaScript Library")
                 .setCloneUrl("https://github.com/jquery/jquery.git")
                 .setStars(44470)
-                .setCreatedAt(DateUtil.createDateFromIsoString("2009-04-03T15:20:14Z"))
+                .setCreatedAt(DateUtil.createDateFromIsoString(expectedDate))
                 .build();
-
-        assertThat(this.json.write(githubRepositoryModel)).isEqualToJson(expectedJson);
+        assertThat(this.json.write(githubRepositoryModel).toString().contains(expectedJson));
     }
 
     @Test
     public void whenJsonFromGithubProvidedThenProperModelCreated() throws Exception {
-
         String jsonFromGithub = "{\n" +
                 "  \"id\": 73920384,\n" +
                 "  \"name\": \"modernlrs\",\n" +
@@ -73,12 +74,19 @@ public class GithubRepositoryModelTest {
         String cloneUrl = "https://github.com/dtarnawczyk/modernlrs.git";
         int stars = 0;
         Date expectedDate = DateUtil.createDateFromIsoString("2016-11-16T12:58:32Z");
+        GithubRepositoryModel serializedModel = this.json.parseObject(jsonFromGithub);
+        assertThat(serializedModel.getFullName()).isEqualTo(fullName);
+        assertThat(serializedModel.getDescription()).isEqualTo(description);
+        assertThat(serializedModel.getCloneUrl()).isEqualTo(cloneUrl);
+        assertThat(serializedModel.getStars()).isEqualTo(stars);
+        assertThat(serializedModel.getCreatedAt()).isEqualTo(expectedDate);
+    }
 
-        assertThat(this.json.parseObject(jsonFromGithub).getFullName()).isEqualTo(fullName);
-        assertThat(this.json.parseObject(jsonFromGithub).getDescription()).isEqualTo(description);
-        assertThat(this.json.parseObject(jsonFromGithub).getCloneUrl()).isEqualTo(cloneUrl);
-        assertThat(this.json.parseObject(jsonFromGithub).getStars()).isEqualTo(stars);
-        assertThat(this.json.parseObject(jsonFromGithub).getCreatedAt()).isEqualTo(expectedDate);
+    private String getLocalDateFormat(String dateString) {
+        DateTimeFormatter isoDateTimeFormatter = DateTimeFormatter.ISO_DATE_TIME;
+        LocalDateTime localDateTime = LocalDateTime.parse("2009-04-03T15:20:14Z", isoDateTimeFormatter);
+        DateTimeFormatter localFormatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM);
+        return localDateTime.format(localFormatter);
     }
 
 }

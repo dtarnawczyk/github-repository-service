@@ -33,10 +33,8 @@ public class GithubConsumerTest {
                 .setStars(44470)
                 .setCreatedAt(expectedDate)
                 .build();
-
         when(this.githubConsumer.getGithubRepositoryModelOnOwnerRepositoryName(repositoryOwner, repositoryName))
                 .thenReturn(mockGithubRepositoryModel);
-
         GithubRepositoryModel model = this.githubConsumer.getGithubRepositoryModelOnOwnerRepositoryName(
                 repositoryOwner, repositoryName);
         assertEquals("jquery/jquery", model.getFullName());
@@ -50,11 +48,9 @@ public class GithubConsumerTest {
     @Test (expected = GithubRepositoryException.class)
     public void whenNonExistingRepositoryNameProvidedThenThrowsException() {
         String unavailableRepositoryName = "fakeRepo";
-
         when(this.githubConsumer.getGithubRepositoryModelOnOwnerRepositoryName(
                 repositoryOwner, unavailableRepositoryName))
                 .thenThrow(GithubRepositoryException.class);
-
         githubConsumer.getGithubRepositoryModelOnOwnerRepositoryName(
                 repositoryOwner, unavailableRepositoryName);
     }
@@ -63,10 +59,8 @@ public class GithubConsumerTest {
     @Test (expected = GithubRepositoryException.class)
     public void whenNonExistingUserProvidedThenThrowsException() {
         String unavailableOwner = "fakeUser";
-
         when(this.githubConsumer.getGithubRepositoryModelOnOwnerRepositoryName(unavailableOwner, repositoryName))
                 .thenThrow(GithubRepositoryException.class);
-
         githubConsumer.getGithubRepositoryModelOnOwnerRepositoryName(
                 unavailableOwner, repositoryName);
     }
