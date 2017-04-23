@@ -3,6 +3,7 @@ package org.githubservice.service;
 import org.githubservice.exception.GithubRepositoryException;
 import org.githubservice.model.GithubRepositoryModel;
 import org.githubservice.util.DateUtil;
+import org.githubservice.util.MockGithubRepositoryModel;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -24,21 +25,20 @@ public class GithubConsumerTest {
 
     @Test
     public void whenExistingUserAndRepositoryNameProvidedThenRetrieveRepositoryDetails() {
-
-        GithubRepositoryModel fakeRepositoryDetails = new GithubRepositoryModel();
-        fakeRepositoryDetails.setFullName("jquery/jquery");
-        fakeRepositoryDetails.setDescription("jQuery JavaScript Library");
-        fakeRepositoryDetails.setCloneUrl("https://github.com/jquery/jquery.git");
-        fakeRepositoryDetails.setStars(44470);
         Date expectedDate = DateUtil.createDateFromIsoString("2009-04-03T15:20:14Z");
-        fakeRepositoryDetails.setCreatedAt(expectedDate);
+        GithubRepositoryModel mockGithubRepositoryModel = new MockGithubRepositoryModel.Builder()
+                .setFullName("jquery/jquery")
+                .setDescription("jQuery JavaScript Library")
+                .setCloneUrl("https://github.com/jquery/jquery.git")
+                .setStars(44470)
+                .setCreatedAt(expectedDate)
+                .build();
 
         when(this.githubConsumer.getGithubRepositoryModelOnOwnerRepositoryName(repositoryOwner, repositoryName))
-                .thenReturn(fakeRepositoryDetails);
+                .thenReturn(mockGithubRepositoryModel);
 
         GithubRepositoryModel model = this.githubConsumer.getGithubRepositoryModelOnOwnerRepositoryName(
                 repositoryOwner, repositoryName);
-
         assertEquals("jquery/jquery", model.getFullName());
         assertEquals("jQuery JavaScript Library", model.getDescription());
         assertEquals("https://github.com/jquery/jquery.git", model.getCloneUrl());
@@ -46,10 +46,10 @@ public class GithubConsumerTest {
         assertEquals(expectedDate, model.getCreatedAt());
     }
 
+    @SuppressWarnings("unchecked")
     @Test (expected = GithubRepositoryException.class)
     public void whenNonExistingRepositoryNameProvidedThenThrowsException() {
-
-        String unavailableRepositoryName = "jquery1234";
+        String unavailableRepositoryName = "fakeRepo";
 
         when(this.githubConsumer.getGithubRepositoryModelOnOwnerRepositoryName(
                 repositoryOwner, unavailableRepositoryName))
@@ -59,10 +59,10 @@ public class GithubConsumerTest {
                 repositoryOwner, unavailableRepositoryName);
     }
 
+    @SuppressWarnings("unchecked")
     @Test (expected = GithubRepositoryException.class)
     public void whenNonExistingUserProvidedThenThrowsException() {
-
-        String unavailableOwner = "jqueryUser";
+        String unavailableOwner = "fakeUser";
 
         when(this.githubConsumer.getGithubRepositoryModelOnOwnerRepositoryName(unavailableOwner, repositoryName))
                 .thenThrow(GithubRepositoryException.class);

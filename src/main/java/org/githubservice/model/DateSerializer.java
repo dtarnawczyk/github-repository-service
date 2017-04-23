@@ -1,7 +1,6 @@
 package org.githubservice.model;
 
 import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 
@@ -16,14 +15,18 @@ public class DateSerializer extends JsonSerializer<Date> {
     @Override
     public void serialize(Date date, JsonGenerator gen, SerializerProvider provider)
             throws IOException {
+        LocalDateTime localDateTime = getDateToLocalDateTimeIso8601Formatter(date.toInstant().toString());
+        String localizedDateTimeString = getLocalizedDateTime(localDateTime);
+        gen.writeString(localizedDateTimeString);
+    }
 
-        // From ISO 8601
+    private LocalDateTime getDateToLocalDateTimeIso8601Formatter(String dateString) {
         DateTimeFormatter isoDateTimeFormatter = DateTimeFormatter.ISO_DATE_TIME;
-        LocalDateTime localDateTime = LocalDateTime.parse(date.toInstant().toString(), isoDateTimeFormatter);
-        // To localized format
-        DateTimeFormatter localFormatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM);
-        String localizedDateTime = localDateTime.format(localFormatter);
+        return LocalDateTime.parse(dateString, isoDateTimeFormatter);
+    }
 
-        gen.writeString(localizedDateTime);
+    private String getLocalizedDateTime(LocalDateTime localDateTime){
+        DateTimeFormatter localFormatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM);
+        return localDateTime.format(localFormatter);
     }
 }

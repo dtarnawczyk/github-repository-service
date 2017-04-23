@@ -25,25 +25,25 @@ public class GithubConsumerImpl implements GithubConsumer {
     @Override
     public GithubRepositoryModel getGithubRepositoryModelOnOwnerRepositoryName (
             String repositoryOwner, String repositoryName) throws GithubRepositoryException{
-
         String githubApiUrl = githubApiConstructor(repositoryOwner, repositoryName);
-
         try {
-
             ResponseEntity<GithubRepositoryModel> response
                     = restTemplate.getForEntity(githubApiUrl, GithubRepositoryModel.class);
             return response.getBody();
-
         } catch (HttpStatusCodeException httpException)  {
-
-            String errorMessage = httpException.getLocalizedMessage();
-            log.error("GitHub API response: "+ errorMessage);
-            throw new GithubRepositoryException(errorMessage,
-                    httpException.getStatusCode().value());
+            throw createGithubRepositoryException(httpException);
         }
     }
 
     private String githubApiConstructor(String repositoryOwner, String repositoryName) {
-        return githubApiUrl + repositoryOwner + "/" + repositoryName;
+        return String.join("/", githubApiUrl, repositoryOwner, repositoryName);
+    }
+
+    private GithubRepositoryException createGithubRepositoryException(
+            HttpStatusCodeException httpException){
+        String errorMessage = httpException.getLocalizedMessage();
+        log.error("GitHub API response: "+ errorMessage);
+        return new GithubRepositoryException(errorMessage,
+                httpException.getStatusCode().value());
     }
 }

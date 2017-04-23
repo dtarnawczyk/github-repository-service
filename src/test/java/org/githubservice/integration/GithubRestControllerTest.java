@@ -51,13 +51,7 @@ public class GithubRestControllerTest {
 
     @Test
     public void whenExistingOwnerAndRepositoryNameProvidedThenReturnRepositoryDetails() throws Exception {
-
-        GithubRepositoryModel fakeRepositoryDetails = new GithubRepositoryModel();
-        fakeRepositoryDetails.setFullName("jquery/jquery");
-        fakeRepositoryDetails.setDescription("jQuery JavaScript Library");
-        fakeRepositoryDetails.setCloneUrl("https://github.com/jquery/jquery.git");
-        fakeRepositoryDetails.setCreatedAt(DateUtil.createDateFromIsoString("2009-04-03T15:20:14Z"));
-
+        GithubRepositoryModel fakeRepositoryDetails = createGithubFakeRepositoryModel();
         this.mockMvc.perform(get(githubRepositoryServicePath).accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.fullName", is(fakeRepositoryDetails.getFullName())))
@@ -69,8 +63,7 @@ public class GithubRestControllerTest {
 
     @Test
     public void whenNotExistingOwnerOrRepositoryNameProvidedThenThrowException() throws Exception {
-
-        githubRepositoryServicePath = "/repositories/testuser/testrepo";
+        githubRepositoryServicePath = "/repositories/fakeuser/fakerepo";
         this.mockMvc.perform(get(githubRepositoryServicePath).accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isNotFound())
             .andExpect(jsonPath("$.statusCode", is(HttpStatus.NOT_FOUND.value())))
@@ -79,12 +72,10 @@ public class GithubRestControllerTest {
 
     @Test
     public void whenNoExistingPathProvidedOrOtherServerErrorThenThrowException() throws Exception {
-
-        MockitoAnnotations.initMocks(this);
-        this.mockMvc = MockMvcBuilders.standaloneSetup(this.githubRestController).build();
-
+        initMockController();
         String errorMessage = "Internal Server Error";
-        when(this.githubConsumer.getGithubRepositoryModelOnOwnerRepositoryName(repositoryOwner, repositoryName))
+        when(this.githubConsumer.getGithubRepositoryModelOnOwnerRepositoryName(
+                repositoryOwner, repositoryName))
                 .thenThrow(new GithubRepositoryException(errorMessage,
                         HttpStatus.INTERNAL_SERVER_ERROR.value()));
 
@@ -95,7 +86,20 @@ public class GithubRestControllerTest {
             .andExpect(jsonPath("$.message", is(errorMessage)));
     }
 
+    private void initMockController() {
+        MockitoAnnotations.initMocks(this);
+        this.mockMvc = MockMvcBuilders.standaloneSetup(this.githubRestController).build();
+    }
 
+    private GithubRepositoryModel createGithubFakeRepositoryModel() {
+        GithubRepositoryModel fakeRepositoryDetails = new GithubRepositoryModel();
+        fakeRepositoryDetails.setFullName("jquery/jquery");
+        fakeRepositoryDetails.setDescription("jQuery JavaScript Library");
+        fakeRepositoryDetails.setCloneUrl("https://github.com/jquery/jquery.git");
+        fakeRepositoryDetails.setCreatedAt(
+                DateUtil.createDateFromIsoString("2009-04-03T15:20:14Z"));
+        return fakeRepositoryDetails;
+    }
 
     private String getLocalizedDateFormat(Date date) {
         DateTimeFormatter isoDateTimeFormatter = DateTimeFormatter.ISO_ZONED_DATE_TIME;

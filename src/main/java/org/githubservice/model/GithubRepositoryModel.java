@@ -7,7 +7,6 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import java.util.Date;
 
-
 @JsonIgnoreProperties(ignoreUnknown=true)
 @JsonPropertyOrder({ "fullName", "description", "cloneUrl", "stars", "createdAt" })
 public class GithubRepositoryModel {

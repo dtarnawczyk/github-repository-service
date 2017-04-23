@@ -1,5 +1,6 @@
 package org.githubservice.config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.client.ClientHttpRequestFactory;
@@ -9,7 +10,8 @@ import org.springframework.web.client.RestTemplate;
 @Configuration
 public class RestClientConfiguration {
 
-    private static final int TIMEOUT = 5000;
+    @Value("${github.api.timeout}")
+    private int timeout;
 
     @Bean
     public RestTemplate restTemplate() {
@@ -17,10 +19,9 @@ public class RestClientConfiguration {
     }
 
     private ClientHttpRequestFactory getClientHttpRequestFactory() {
-
         HttpComponentsClientHttpRequestFactory clientHttpRequestFactory
                 = new HttpComponentsClientHttpRequestFactory();
-        clientHttpRequestFactory.setConnectTimeout(TIMEOUT);
+        clientHttpRequestFactory.setConnectTimeout(timeout);
         return clientHttpRequestFactory;
     }
 }

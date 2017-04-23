@@ -1,6 +1,7 @@
 package org.githubservice.model;
 
 import org.githubservice.util.DateUtil;
+import org.githubservice.util.MockGithubRepositoryModel;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,12 +31,14 @@ public class GithubRepositoryModelTest {
     @Test
     public void whenModelProvidedThenProperJsonCreated() throws Exception {
 
-        GithubRepositoryModel githubRepositoryModel = new GithubRepositoryModel();
-        githubRepositoryModel.setFullName("jquery/jquery");
-        githubRepositoryModel.setDescription("jQuery JavaScript Library");
-        githubRepositoryModel.setCloneUrl("https://github.com/jquery/jquery.git");
-        githubRepositoryModel.setStars(44470);
-        githubRepositoryModel.setCreatedAt(DateUtil.createDateFromIsoString("2009-04-03T15:20:14Z"));
+        GithubRepositoryModel githubRepositoryModel = new MockGithubRepositoryModel.Builder()
+                .setFullName("jquery/jquery")
+                .setDescription("jQuery JavaScript Library")
+                .setCloneUrl("https://github.com/jquery/jquery.git")
+                .setStars(44470)
+                .setCreatedAt(DateUtil.createDateFromIsoString("2009-04-03T15:20:14Z"))
+                .build();
+
         assertThat(this.json.write(githubRepositoryModel)).isEqualToJson(expectedJson);
     }
 
@@ -70,13 +73,6 @@ public class GithubRepositoryModelTest {
         String cloneUrl = "https://github.com/dtarnawczyk/modernlrs.git";
         int stars = 0;
         Date expectedDate = DateUtil.createDateFromIsoString("2016-11-16T12:58:32Z");
-
-        GithubRepositoryModel expectedGithubRepositoryModel = new GithubRepositoryModel();
-        expectedGithubRepositoryModel.setFullName(fullName);
-        expectedGithubRepositoryModel.setDescription(description);
-        expectedGithubRepositoryModel.setCloneUrl(cloneUrl);
-        expectedGithubRepositoryModel.setStars(stars);
-        expectedGithubRepositoryModel.setCreatedAt(expectedDate);
 
         assertThat(this.json.parseObject(jsonFromGithub).getFullName()).isEqualTo(fullName);
         assertThat(this.json.parseObject(jsonFromGithub).getDescription()).isEqualTo(description);
