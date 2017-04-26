@@ -1,4 +1,4 @@
-package org.githubservice.exception;
+package org.githubservice.service;
 
 public class GithubRepositoryException extends RuntimeException {
 

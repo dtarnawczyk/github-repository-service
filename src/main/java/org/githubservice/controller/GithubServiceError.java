@@ -1,4 +1,4 @@
-package org.githubservice.exception;
+package org.githubservice.controller;
 
 
 public class GithubServiceError {

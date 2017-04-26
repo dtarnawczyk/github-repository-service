@@ -2,11 +2,13 @@ package org.githubservice.integration;
 
 import org.githubservice.Application;
 import org.githubservice.controller.GithubRestController;
-import org.githubservice.exception.GithubRepositoryException;
+import org.githubservice.service.GithubRepositoryException;
 import org.githubservice.model.GithubRepositoryModel;
 import org.githubservice.service.GithubConsumer;
 import org.githubservice.util.DateUtil;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -26,6 +28,7 @@ import java.time.format.FormatStyle;
 import java.util.Date;
 
 import static org.hamcrest.Matchers.is;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -35,6 +38,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest(classes = Application.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
 public class GithubRestControllerTest {
+
+    @Rule
+    public ExpectedException githubRepositoryException = ExpectedException.none();
 
     @Autowired
     private MockMvc mockMvc;
@@ -75,14 +81,15 @@ public class GithubRestControllerTest {
         initMockController();
         String errorMessage = "Internal Server Error";
         when(this.githubConsumer.getGithubRepositoryModelOnOwnerRepositoryName(
-                repositoryOwner, repositoryName))
+                any(), any()))
                 .thenThrow(new GithubRepositoryException(errorMessage,
-                        HttpStatus.INTERNAL_SERVER_ERROR.value()));
-
+                        HttpStatus.SERVICE_UNAVAILABLE.value()));
+        githubRepositoryException.expectMessage(errorMessage);
+        githubRepositoryException.expectCause(org.hamcrest.Matchers.any(GithubRepositoryException.class));
         this.mockMvc.perform(get(githubRepositoryServicePath)
             .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().is5xxServerError())
-            .andExpect(jsonPath("$.statusCode", is(HttpStatus.INTERNAL_SERVER_ERROR.value())))
+            .andExpect(jsonPath("$.statusCode", is(HttpStatus.SERVICE_UNAVAILABLE.value())))
             .andExpect(jsonPath("$.message", is(errorMessage)));
     }
 

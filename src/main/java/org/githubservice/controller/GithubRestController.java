@@ -1,9 +1,8 @@
 package org.githubservice.controller;
 
-import org.githubservice.exception.GithubRepositoryException;
-import org.githubservice.exception.GithubServiceError;
 import org.githubservice.model.GithubRepositoryModel;
 import org.githubservice.service.GithubConsumer;
+import org.githubservice.service.GithubRepositoryException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,30 +19,12 @@ public class GithubRestController {
     private GithubConsumer githubConsumer;
 
     @RequestMapping(method = RequestMethod.GET)
-    public ResponseEntity<?> getGithubRepositoryDetails(
+    public ResponseEntity<GithubRepositoryModel> getGithubRepositoryDetails(
             @PathVariable String owner,
-            @PathVariable String repositoryname) {
-        try {
+            @PathVariable String repositoryname) throws GithubRepositoryException {
             GithubRepositoryModel githubRepoModel =
                     githubConsumer.getGithubRepositoryModelOnOwnerRepositoryName(
                             owner, repositoryname);
             return new ResponseEntity<GithubRepositoryModel>(githubRepoModel, HttpStatus.OK);
-        } catch (GithubRepositoryException serviceException) {
-            return handleServiceException(serviceException);
-        }
-    }
-
-    private ResponseEntity<GithubServiceError> handleServiceException(
-            GithubRepositoryException githubRepositoryException) {
-        GithubServiceError error = new GithubServiceError();
-        error.setStatusCode(githubRepositoryException.getStatusCode());
-        if(githubRepositoryException.getStatusCode() == HttpStatus.NOT_FOUND.value()) {
-            error.setMessage("GitHub repository or user not found");
-            return new ResponseEntity<GithubServiceError>(error, HttpStatus.NOT_FOUND);
-        }else{
-            // Not to confuse users.
-            error.setMessage(githubRepositoryException.getLocalizedMessage());
-            return new ResponseEntity<GithubServiceError>(error, HttpStatus.SERVICE_UNAVAILABLE);
-        }
     }
 }

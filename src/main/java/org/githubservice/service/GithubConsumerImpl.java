@@ -1,6 +1,5 @@
 package org.githubservice.service;
 
-import org.githubservice.exception.GithubRepositoryException;
 import org.githubservice.model.GithubRepositoryModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,7 +13,7 @@ import org.springframework.web.client.RestTemplate;
 @Service
 public class GithubConsumerImpl implements GithubConsumer {
 
-    private Logger log = LoggerFactory.getLogger(GithubConsumerImpl.class);
+    private static final Logger log = LoggerFactory.getLogger(GithubConsumerImpl.class);
 
     @Value("${github.api.url}")
     private String githubApiUrl;

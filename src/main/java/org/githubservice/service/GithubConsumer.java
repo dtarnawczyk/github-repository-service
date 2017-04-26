@@ -1,6 +1,5 @@
 package org.githubservice.service;
 
-import org.githubservice.exception.GithubRepositoryException;
 import org.githubservice.model.GithubRepositoryModel;
 
 public interface GithubConsumer {

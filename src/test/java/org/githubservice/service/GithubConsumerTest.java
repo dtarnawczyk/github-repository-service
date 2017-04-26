@@ -1,6 +1,5 @@
 package org.githubservice.service;
 
-import org.githubservice.exception.GithubRepositoryException;
 import org.githubservice.model.GithubRepositoryModel;
 import org.githubservice.util.DateUtil;
 import org.githubservice.util.MockGithubRepositoryModel;
