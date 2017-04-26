@@ -6,6 +6,7 @@ import org.githubservice.service.GithubRepositoryException;
 import org.githubservice.model.GithubRepositoryModel;
 import org.githubservice.service.GithubConsumer;
 import org.githubservice.util.DateUtil;
+import org.githubservice.util.MockGithubRepositoryModel;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -99,13 +100,14 @@ public class GithubRestControllerTest {
     }
 
     private GithubRepositoryModel createGithubFakeRepositoryModel() {
-        GithubRepositoryModel fakeRepositoryDetails = new GithubRepositoryModel();
-        fakeRepositoryDetails.setFullName("jquery/jquery");
-        fakeRepositoryDetails.setDescription("jQuery JavaScript Library");
-        fakeRepositoryDetails.setCloneUrl("https://github.com/jquery/jquery.git");
-        fakeRepositoryDetails.setCreatedAt(
-                DateUtil.createDateFromIsoString("2009-04-03T15:20:14Z"));
-        return fakeRepositoryDetails;
+        GithubRepositoryModel githubRepositoryModel = new MockGithubRepositoryModel.Builder()
+                .setFullName("jquery/jquery")
+                .setDescription("jQuery JavaScript Library")
+                .setCloneUrl("https://github.com/jquery/jquery.git")
+                .setStars(44470)
+                .setCreatedAt(DateUtil.createDateFromIsoString("2009-04-03T15:20:14Z"))
+                .build();
+        return githubRepositoryModel;
     }
 
     private String getLocalizedDateFormat(Date date) {

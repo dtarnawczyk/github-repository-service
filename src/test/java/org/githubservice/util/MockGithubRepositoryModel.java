@@ -40,15 +40,15 @@ public class MockGithubRepositoryModel extends GithubRepositoryModel {
         }
 
         public MockGithubRepositoryModel build() {
-            return new MockGithubRepositoryModel(this);
+            return new MockGithubRepositoryModel(fullName, description, cloneUrl, stars, createdAt);
         }
     }
 
-    private MockGithubRepositoryModel(Builder builder) {
-        setFullName(builder.fullName);
-        setDescription(builder.description);
-        setCloneUrl(builder.cloneUrl);
-        setStars(builder.stars);
-        setCreatedAt(builder.createdAt);
+    private MockGithubRepositoryModel(String fullName,
+                                      String description,
+                                      String cloneUrl,
+                                      int stars,
+                                      Date createdAt) {
+        super(fullName, description, cloneUrl, stars, createdAt);
     }
 }
