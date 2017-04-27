@@ -30,7 +30,7 @@ bootRepackage {
     mainClass = 'org.githubservice.Application'
 }
 
-task copyJarToRoot(type: Copwy) {
+task copyJarToRoot(type: Copy) {
     copy {
         from jar
         into "."
