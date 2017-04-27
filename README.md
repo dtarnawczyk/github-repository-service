@@ -48,6 +48,12 @@ logging:
 github:
     api:
         url: https://api.github.com/repos
-        timeout: 5000
+        connectionTimeout: 4000
+        socketTimeout: 2000
+        requestTimeout: 4000
+        maxRedirects: 0
+        expectContinue: FALSE
+        retriesCounter: 3
+        retriesTimeout: 500
 
 ```

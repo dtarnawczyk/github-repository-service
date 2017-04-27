@@ -1,15 +1,16 @@
 package org.githubservice.util;
 
+import org.springframework.context.i18n.LocaleContextHolder;
+
 import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
+import java.time.format.FormatStyle;
 
-public class DateUtil {
+public final class DateUtil {
 
-    public static Date createDateFromIsoString(String dateString){
-        DateTimeFormatter isoDateTimeFormatter = DateTimeFormatter.ISO_DATE_TIME;
-        LocalDateTime localDateTime = LocalDateTime.parse(dateString, isoDateTimeFormatter);
-        return Date.from(localDateTime.toInstant(ZoneOffset.UTC));
+    public static LocalDateTime createDate(String dateTime){
+        DateTimeFormatter localFormatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM);
+        localFormatter = localFormatter.withLocale(LocaleContextHolder.getLocale());
+        return LocalDateTime.parse(dateTime, localFormatter);
     }
 }

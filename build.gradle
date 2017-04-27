@@ -30,7 +30,7 @@ bootRepackage {
     mainClass = 'org.githubservice.Application'
 }
 
-task copyJarToRoot(type: Copy) {
+task copyJarToRoot(type: Copwy) {
     copy {
         from jar
         into "."
@@ -57,5 +57,6 @@ test {
 dependencies {
     compile ('org.springframework.boot:spring-boot-starter-web')
     compile ('org.apache.httpcomponents:httpclient:4.5.2')
+    compile("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.8.7")
     testCompile('org.springframework.boot:spring-boot-starter-test')
 }

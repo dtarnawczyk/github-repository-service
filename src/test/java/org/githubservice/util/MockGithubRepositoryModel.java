@@ -2,7 +2,7 @@ package org.githubservice.util;
 
 import org.githubservice.model.GithubRepositoryModel;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 public class MockGithubRepositoryModel extends GithubRepositoryModel {
 
@@ -12,7 +12,7 @@ public class MockGithubRepositoryModel extends GithubRepositoryModel {
         private String description;
         private String cloneUrl;
         private Integer stars;
-        private Date createdAt;
+        private LocalDateTime createdAt;
 
         public Builder setFullName(String fullName){
             this.fullName = fullName;
@@ -34,7 +34,7 @@ public class MockGithubRepositoryModel extends GithubRepositoryModel {
             return this;
         }
 
-        public Builder setCreatedAt(Date createdAt){
+        public Builder setCreatedAt(LocalDateTime createdAt){
             this.createdAt = createdAt;
             return this;
         }
@@ -48,7 +48,7 @@ public class MockGithubRepositoryModel extends GithubRepositoryModel {
                                       String description,
                                       String cloneUrl,
                                       int stars,
-                                      Date createdAt) {
+                                      LocalDateTime createdAt) {
         super(fullName, description, cloneUrl, stars, createdAt);
     }
 }

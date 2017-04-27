@@ -8,9 +8,9 @@ import org.junit.runner.RunWith;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
-import static org.junit.Assert.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
 @RunWith(SpringRunner.class)
@@ -24,7 +24,7 @@ public class GithubConsumerTest {
 
     @Test
     public void whenExistingUserAndRepositoryNameProvidedThenRetrieveRepositoryDetails() {
-        Date expectedDate = DateUtil.createDateFromIsoString("2009-04-03T15:20:14Z");
+        LocalDateTime expectedDate = DateUtil.createDate("2009-04-03 15:20:14");
         GithubRepositoryModel mockGithubRepositoryModel = new MockGithubRepositoryModel.Builder()
                 .setFullName("jquery/jquery")
                 .setDescription("jQuery JavaScript Library")
@@ -32,25 +32,25 @@ public class GithubConsumerTest {
                 .setStars(44470)
                 .setCreatedAt(expectedDate)
                 .build();
-        when(this.githubConsumer.getGithubRepositoryModelOnOwnerRepositoryName(repositoryOwner, repositoryName))
+        when(this.githubConsumer.getRepositoryDetails(repositoryOwner, repositoryName))
                 .thenReturn(mockGithubRepositoryModel);
-        GithubRepositoryModel model = this.githubConsumer.getGithubRepositoryModelOnOwnerRepositoryName(
+        GithubRepositoryModel model = this.githubConsumer.getRepositoryDetails(
                 repositoryOwner, repositoryName);
-        assertEquals("jquery/jquery", model.getFullName());
-        assertEquals("jQuery JavaScript Library", model.getDescription());
-        assertEquals("https://github.com/jquery/jquery.git", model.getCloneUrl());
-        assertEquals(44470, model.getStars());
-        assertEquals(expectedDate, model.getCreatedAt());
+        assertThat("jquery/jquery").isEqualTo(model.getFullName());
+        assertThat("jQuery JavaScript Library").isEqualTo(model.getDescription());
+        assertThat("https://github.com/jquery/jquery.git").isEqualTo(model.getCloneUrl());
+        assertThat(44470).isEqualTo(model.getStars());
+        assertThat(expectedDate).isEqualByComparingTo(model.getCreatedAt());
     }
 
     @SuppressWarnings("unchecked")
     @Test (expected = GithubRepositoryException.class)
     public void whenNonExistingRepositoryNameProvidedThenThrowsException() {
         String unavailableRepositoryName = "fakeRepo";
-        when(this.githubConsumer.getGithubRepositoryModelOnOwnerRepositoryName(
+        when(this.githubConsumer.getRepositoryDetails(
                 repositoryOwner, unavailableRepositoryName))
                 .thenThrow(GithubRepositoryException.class);
-        githubConsumer.getGithubRepositoryModelOnOwnerRepositoryName(
+        githubConsumer.getRepositoryDetails(
                 repositoryOwner, unavailableRepositoryName);
     }
 
@@ -58,9 +58,9 @@ public class GithubConsumerTest {
     @Test (expected = GithubRepositoryException.class)
     public void whenNonExistingUserProvidedThenThrowsException() {
         String unavailableOwner = "fakeUser";
-        when(this.githubConsumer.getGithubRepositoryModelOnOwnerRepositoryName(unavailableOwner, repositoryName))
+        when(this.githubConsumer.getRepositoryDetails(unavailableOwner, repositoryName))
                 .thenThrow(GithubRepositoryException.class);
-        githubConsumer.getGithubRepositoryModelOnOwnerRepositoryName(
+        githubConsumer.getRepositoryDetails(
                 unavailableOwner, repositoryName);
     }
 

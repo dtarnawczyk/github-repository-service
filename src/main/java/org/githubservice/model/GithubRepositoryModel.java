@@ -3,9 +3,8 @@ package org.githubservice.model;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @JsonIgnoreProperties(ignoreUnknown=true)
 public class GithubRepositoryModel {
@@ -14,7 +13,7 @@ public class GithubRepositoryModel {
     private final String description;
     private final String cloneUrl;
     private final int stars;
-    private final Date createdAt;
+    private final LocalDateTime createdAt;
 
     @JsonCreator
     public GithubRepositoryModel(
@@ -22,7 +21,7 @@ public class GithubRepositoryModel {
             @JsonProperty("description") String description,
             @JsonProperty("clone_url") String cloneUrl,
             @JsonProperty("stargazers_count") int stars,
-            @JsonProperty("created_at") Date createdAt) {
+            @JsonProperty("created_at") LocalDateTime createdAt) {
         this.fullName = fullName;
         this.description = description;
         this.cloneUrl = cloneUrl;
@@ -50,8 +49,7 @@ public class GithubRepositoryModel {
     }
 
     @JsonProperty("createdAt")
-    @JsonSerialize(using = DateSerializer.class)
-    public Date getCreatedAt() {
+    public LocalDateTime getCreatedAt() {
         return createdAt;
     }
 }

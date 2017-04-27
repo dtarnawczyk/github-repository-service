@@ -34,23 +34,25 @@ public class RestClientConfiguration {
     }
 
     private ClientHttpRequestFactory getClientHttpRequestFactory() {
-        HttpComponentsClientHttpRequestFactory clientHttpRequestFactory
-                = new HttpComponentsClientHttpRequestFactory();
-        RequestConfig.Builder builder = RequestConfig.custom()
-                .setConnectTimeout(connectionTimeout)
-                .setSocketTimeout(socketTimeout)
-                .setConnectionRequestTimeout(requestTimeout)
-                .setMaxRedirects(maxRedirects)
-                .setExpectContinueEnabled(expectContinue);
-        if (maxRedirects <= 0) {
-            builder.setRedirectsEnabled(false);
-        }
         CloseableHttpClient httpClient = HttpClientBuilder
                 .create()
-                .setDefaultRequestConfig(builder.build())
+                .setDefaultRequestConfig(getRequestConfig())
                 .disableCookieManagement()
                 .disableAuthCaching()
                 .build();
         return new HttpComponentsClientHttpRequestFactory(httpClient);
+    }
+
+    private RequestConfig getRequestConfig() {
+        RequestConfig.Builder builder = RequestConfig.custom()
+                .setConnectTimeout(this.connectionTimeout)
+                .setSocketTimeout(this.socketTimeout)
+                .setConnectionRequestTimeout(this.requestTimeout)
+                .setMaxRedirects(this.maxRedirects)
+                .setExpectContinueEnabled(this.expectContinue);
+        if (this.maxRedirects <= 0) {
+            builder.setRedirectsEnabled(false);
+        }
+        return builder.build();
     }
 }

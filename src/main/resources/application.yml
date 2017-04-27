@@ -8,9 +8,15 @@ logging:
 github:
     api:
         url: https://api.github.com/repos
-        connectionTimeout: 5000
+        connectionTimeout: 4000
         socketTimeout: 2000
-        requestTimeout: 5000
+        requestTimeout: 4000
         maxRedirects: 0
-        expectContinue : FALSE
+        expectContinue: FALSE
+        retriesCounter: 3
+        retriesTimeout: 500
 
+spring:
+    jackson:
+        serialization:
+            WRITE_DATES_AS_TIMESTAMPS: FALSE
