@@ -1,42 +1,70 @@
 package org.githubservice.integration;
 
 import org.githubservice.Application;
-import org.githubservice.controller.GithubServiceError;
 import org.githubservice.service.GithubConsumer;
 import org.githubservice.service.GithubRepositoryException;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.web.client.MockRestServiceServer;
+import org.springframework.web.client.RestTemplate;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.when;
+import static org.springframework.test.web.client.ExpectedCount.times;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.withStatus;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = Application.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class GithubInternalErrorTest {
 
-    @MockBean
-    private GithubConsumer githubConsumer;
+    @Value("${github.api.url}")
+    private String githubApiUrl;
+
+    @Value("${github.api.retriesCounter}")
+    private int retriesCounter;
 
     @Autowired
-    private TestRestTemplate restTemplate;
+    private RestTemplate githubClientRestTemplate;
+
+    @Autowired
+    private GithubConsumer githubConsumer;
+
+    private ClientHttpRequestFactory originalRequestFactory;
+
+    @Before
+    public void saveRequestFactory() {
+        this.originalRequestFactory = this.githubClientRestTemplate.getRequestFactory();
+    }
+
+    @After
+    public void restoreRequestFactory() {
+        this.githubClientRestTemplate.setRequestFactory(this.originalRequestFactory);
+    }
 
     @Test
-    public void whenErrorOnGitHubServiceThenReturnErrorMessage() {
-        String errorMessage = "Internal Server Error";
-        when(this.githubConsumer.getRepositoryDetails(
-                "dojo", "dojo"))
-                .thenThrow(new GithubRepositoryException(errorMessage,
-                        HttpStatus.SERVICE_UNAVAILABLE.value()));
-        ResponseEntity<GithubServiceError> response= this.restTemplate.getForEntity(
-                "/repositories/dojo/dojo", GithubServiceError.class);
-        assertThat(HttpStatus.SERVICE_UNAVAILABLE).isEqualTo(response.getStatusCode());
-        assertThat(response.getBody().getMessage()).isEqualTo(errorMessage);
+    public void whenErrorOnGitHubServiceThenThenRetry() {
+        String owner = "dojo";
+        String repository = "dojo";
+        String gitHubRepositoryPath = String.join("/", this.githubApiUrl, owner, repository);
+        MockRestServiceServer server = MockRestServiceServer.bindTo(this.githubClientRestTemplate).build();
+        server.expect(times(this.retriesCounter), requestTo(gitHubRepositoryPath))
+                .andExpect(method(HttpMethod.GET))
+                .andRespond(withStatus(HttpStatus.INTERNAL_SERVER_ERROR));
+        try {
+            this.githubConsumer.getRepositoryDetails(owner, repository);
+        } catch (GithubRepositoryException exception){
+            assertThat(exception.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR.value());
+        }
+        server.verify();
     }
 }

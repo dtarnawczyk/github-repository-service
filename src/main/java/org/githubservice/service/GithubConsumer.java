@@ -3,9 +3,9 @@ package org.githubservice.service;
 import org.githubservice.model.GithubRepositoryModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
+import org.springframework.retry.support.RetryTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
@@ -18,31 +18,27 @@ public class GithubConsumer {
     @Value("${github.api.url}")
     private String githubApiUrl;
 
-    @Value("${github.api.retriesCounter}")
-    private int retriesCounter;
+    private final RestTemplate restTemplate;
 
-    @Value("${github.api.retriesTimeout}")
-    private int retriesTimeout;
+    private final RetryTemplate retryTemplate;
 
-    @Autowired
-    private RestTemplate restTemplate;
+    public GithubConsumer(RestTemplate restTemplate, RetryTemplate retryTemplate) {
+        this.restTemplate = restTemplate;
+        this.retryTemplate = retryTemplate;
+    }
 
     public GithubRepositoryModel getRepositoryDetails (
             String repositoryOwner, String repositoryName) throws GithubRepositoryException {
         String githubApiUrl = githubApiConstructor(repositoryOwner, repositoryName);
-        while(true) {
-            log.debug("GitHub API call attempt");
-            try {
-                ResponseEntity<GithubRepositoryModel> response
-                        = restTemplate.getForEntity(githubApiUrl, GithubRepositoryModel.class);
+        try {
+            return retryTemplate.execute(retryCallback -> {
+                log.debug("GitHub API call attempt");
+                ResponseEntity<GithubRepositoryModel> response =
+                        this.restTemplate.getForEntity(githubApiUrl, GithubRepositoryModel.class);
                 return response.getBody();
-            } catch (HttpStatusCodeException httpException)  {
-                retriesCounter -= 1;
-                if(retriesCounter <= 0) {
-                    throw createGithubRepositoryException(httpException);
-                }
-                waitUntilNextRetry();
-            }
+            });
+        } catch (HttpStatusCodeException httpException) {
+            throw createGithubRepositoryException(httpException);
         }
     }
 
@@ -53,17 +49,8 @@ public class GithubConsumer {
     private GithubRepositoryException createGithubRepositoryException(
             HttpStatusCodeException httpException){
         String errorMessage = httpException.getLocalizedMessage();
-        log.error("GitHub API exception caused by: ", httpException);
-        return new GithubRepositoryException(errorMessage,
-                httpException.getStatusCode().value());
+        log.error("GitHub API exception caused by: ", httpException.getMostSpecificCause());
+        return new GithubRepositoryException(errorMessage, httpException.getStatusCode().value());
     }
 
-    private void waitUntilNextRetry() {
-        try{
-            Thread.sleep(this.retriesTimeout);
-        }catch(InterruptedException interruptedException) {
-            log.error("Retrying timeout interruption caused by: ",
-                    interruptedException);
-        }
-    }
 }

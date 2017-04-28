@@ -24,8 +24,7 @@ public class GithubRestController {
     public ResponseEntity<GithubRepositoryModel> getGithubRepositoryDetails(
             @PathVariable String owner,
             @PathVariable String repositoryname) throws GithubRepositoryException {
-        GithubRepositoryModel githubRepoModel =
-                githubConsumer.getRepositoryDetails(owner, repositoryname);
-        return new ResponseEntity<GithubRepositoryModel>(githubRepoModel, HttpStatus.OK);
+        return new ResponseEntity<GithubRepositoryModel>(
+                githubConsumer.getRepositoryDetails(owner, repositoryname), HttpStatus.OK);
     }
 }

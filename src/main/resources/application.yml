@@ -8,13 +8,13 @@ logging:
 github:
     api:
         url: https://api.github.com/repos
-        connectionTimeout: 4000
-        socketTimeout: 2000
-        requestTimeout: 4000
+        connectionTimeout: 4
+        socketTimeout: 2
+        requestTimeout: 4
         maxRedirects: 0
         expectContinue: FALSE
         retriesCounter: 3
-        retriesTimeout: 500
+        retriesTimeout: 5
 
 spring:
     jackson:

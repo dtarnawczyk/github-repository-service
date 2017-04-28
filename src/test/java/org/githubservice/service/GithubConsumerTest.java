@@ -63,5 +63,4 @@ public class GithubConsumerTest {
         githubConsumer.getRepositoryDetails(
                 unavailableOwner, repositoryName);
     }
-
 }
