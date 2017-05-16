@@ -1,4 +1,4 @@
-package org.githubservice.model;
+package org.githubservice.domain;
 
 import org.githubservice.util.DateUtil;
 import org.githubservice.util.MockGithubRepositoryModel;

@@ -2,7 +2,7 @@ package org.githubservice.integration;
 
 import org.githubservice.Application;
 import org.githubservice.controller.GithubServiceError;
-import org.githubservice.model.GithubRepositoryModel;
+import org.githubservice.domain.GithubRepositoryModel;
 import org.githubservice.util.DateUtil;
 import org.githubservice.util.MockGithubRepositoryModel;
 import org.junit.After;

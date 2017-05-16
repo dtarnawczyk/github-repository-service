@@ -1,4 +1,4 @@
-package org.githubservice.model;
+package org.githubservice.domain;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;

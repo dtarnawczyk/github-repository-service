@@ -1,6 +1,6 @@
 package org.githubservice.util;
 
-import org.githubservice.model.GithubRepositoryModel;
+import org.githubservice.domain.GithubRepositoryModel;
 
 import java.time.LocalDateTime;
 

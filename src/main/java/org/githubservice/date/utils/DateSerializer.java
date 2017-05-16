@@ -1,9 +1,8 @@
-package org.githubservice.model;
+package org.githubservice.date.utils;
 
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JsonDeserializer;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.JsonSerializer;
+import com.fasterxml.jackson.databind.SerializerProvider;
 import org.springframework.boot.jackson.JsonComponent;
 import org.springframework.context.i18n.LocaleContextHolder;
 
@@ -13,16 +12,14 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 
 @JsonComponent
-public class DateDeserializer extends JsonDeserializer<LocalDateTime> {
+public class DateSerializer extends JsonSerializer<LocalDateTime> {
 
     @Override
-    public LocalDateTime deserialize(JsonParser parser, DeserializationContext context)
+    public void serialize(LocalDateTime localDateTime, JsonGenerator generator, SerializerProvider provider)
             throws IOException {
-        String dateTime = parser.getText();
         DateTimeFormatter localFormatter =
                 DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM);
         localFormatter = localFormatter.withLocale(LocaleContextHolder.getLocale());
-        return LocalDateTime.parse(dateTime, localFormatter);
+        generator.writeString(localDateTime.format(localFormatter));
     }
-
 }

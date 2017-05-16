@@ -1,6 +1,6 @@
 package org.githubservice.controller;
 
-import org.githubservice.model.GithubRepositoryModel;
+import org.githubservice.domain.GithubRepositoryModel;
 import org.githubservice.service.GithubConsumer;
 import org.githubservice.service.GithubRepositoryException;
 import org.springframework.http.HttpStatus;
